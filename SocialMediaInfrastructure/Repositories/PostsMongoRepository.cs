@@ -1,17 +1,15 @@
-﻿using SocialMediaCore.Entities;
-using SocialMediaCore.Interfaces;
+﻿using SocialMediaCore.Interfaces;
 using SocialMediaInfrastructure.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SocialMediaInfrastructure.Repositories
 {
-    public class PostsMongoRepository : IPostRepository
+    public class PostsMongoRepository //: IPostRepository
     {
-        public async Task<IEnumerable<Publicacion>> GetPosts()
+        public async Task<IEnumerable<Post>> GetPosts()
         {
             var posts = Enumerable.Range(1, 10).Select(x => new Post
             {
