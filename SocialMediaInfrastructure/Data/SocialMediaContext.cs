@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using SocialMediaCore.Entities;
 using SocialMediaInfrastructure.Data.Configurations;
-using SocialMediaInfrastructure.Entities;
 
 namespace SocialMediaInfrastructure.Data
 {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace SocialMediaInfrastructure.Entities
+namespace SocialMediaCore.Entities
 {
     public partial class Comment
     {

@@ -1,4 +1,4 @@
-﻿using SocialMediaInfrastructure.Entities;
+﻿using SocialMediaCore.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

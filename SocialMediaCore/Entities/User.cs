@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace SocialMediaInfrastructure.Entities
+namespace SocialMediaCore.Entities
 {
     public partial class User
     {

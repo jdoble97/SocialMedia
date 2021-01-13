@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -29,14 +30,18 @@ namespace SocialMediaApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
+            //Añadir automapping
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            services.AddControllers().AddNewtonsoftJson(options=> {
+                options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+            });
 
             //Aquí configurar servicios para las dependencias. Similar a angular
             //cuando se use esa abstraccion se usará esa implementación
             services.AddDbContext<SocialMediaContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("SocialMedia"))
             );
-            services.AddTransient<IPostRepository, PostRepository>();
+            services.AddTransient<IPostRepository, PostRepository>();//Para inyectar el repositorio adecuado a la herramienta
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

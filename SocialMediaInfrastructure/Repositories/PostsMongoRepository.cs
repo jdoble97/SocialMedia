@@ -1,5 +1,4 @@
-﻿using SocialMediaCore.Interfaces;
-using SocialMediaInfrastructure.Entities;
+﻿using SocialMediaCore.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
