@@ -1,4 +1,5 @@
 using AutoMapper;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -10,6 +11,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using SocialMediaCore.Interfaces;
 using SocialMediaInfrastructure.Data;
+using SocialMediaInfrastructure.Filters;
 using SocialMediaInfrastructure.Repositories;
 using System;
 using System.Collections.Generic;
@@ -32,8 +34,13 @@ namespace SocialMediaApi
         {
             //Añadir automapping
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-            services.AddControllers().AddNewtonsoftJson(options=> {
+            services.AddControllers().AddNewtonsoftJson(options =>
+            {
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+            })
+            .ConfigureApiBehaviorOptions(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
             });
 
             //Aquí configurar servicios para las dependencias. Similar a angular
@@ -42,6 +49,14 @@ namespace SocialMediaApi
                 options.UseSqlServer(Configuration.GetConnectionString("SocialMedia"))
             );
             services.AddTransient<IPostRepository, PostRepository>();//Para inyectar el repositorio adecuado a la herramienta
+
+            //Para usar el filter como middleware, es decir un filtro de forma global
+            services.AddMvc(options =>
+            {
+                options.Filters.Add<ValidationFilter>();
+            }).AddFluentValidation(options=> {
+                options.RegisterValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
