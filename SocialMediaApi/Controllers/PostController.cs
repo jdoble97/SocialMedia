@@ -13,19 +13,19 @@ namespace SocialMediaApi.Controllers
     [ApiController]
     public class PostController : ControllerBase
     {
-        private readonly IPostRepository _postRepository;
+        private readonly IPostService _postService;
         private readonly IMapper _mapper;
 
         //Por constructor inyectamos dependencias
-        public PostController(IPostRepository postRepository, IMapper mapper)
+        public PostController(IPostService postRepository, IMapper mapper)
         {
-            _postRepository = postRepository;
+            _postService = postRepository;
             _mapper = mapper;
         }
         [HttpGet]
         public async Task<IActionResult> GetPosts()
         {
-            var posts = await _postRepository.GetPosts();
+            var posts = await _postService.GetPosts();
             /*var postsDto = posts.Select(x => new PostDto
             {
                 PostId = x.PostId,
@@ -42,7 +42,7 @@ namespace SocialMediaApi.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetPost(int id)
         {
-            var post = await _postRepository.GetPost(id);
+            var post = await _postService.GetPost(id);
             /*PostDto postDto = new PostDto
             {
                 PostId = post.PostId,
@@ -68,7 +68,7 @@ namespace SocialMediaApi.Controllers
                 UserId = postDto.UserId
             };*/
             var post = _mapper.Map<Post>(postDto);
-            await _postRepository.InsertPost(post);
+            await _postService.InsertPost(post);
             postDto = _mapper.Map<PostDto>(post);
             var response = new ApiResponse<PostDto>(postDto);
             return Ok(response);
@@ -80,7 +80,7 @@ namespace SocialMediaApi.Controllers
         {
             var post = _mapper.Map<Post>(postDto);
             post.PostId = id;
-            var result = await _postRepository.UpdatePost(post);
+            var result = await _postService.UpdatePost(post);
             var response = new ApiResponse<bool>(result);
             return Ok(response);
         }
@@ -89,7 +89,7 @@ namespace SocialMediaApi.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var result = await _postRepository.DeletePost(id);
+            var result = await _postService.DeletePost(id);
             var response = new ApiResponse<bool>(result);
             return Ok(response);
         }
