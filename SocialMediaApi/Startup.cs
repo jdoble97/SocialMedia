@@ -29,7 +29,9 @@ namespace SocialMediaApi
         {
             //Añadir automapping
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-            services.AddControllers().AddNewtonsoftJson(options =>
+            services.AddControllers(options=> {
+                options.Filters.Add<GlobalExceptionFilter>();
+            }).AddNewtonsoftJson(options =>
             {
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
             })
@@ -55,6 +57,7 @@ namespace SocialMediaApi
             }).AddFluentValidation(options=> {
                 options.RegisterValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
             });
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

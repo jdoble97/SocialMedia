@@ -5,15 +5,8 @@ using System.Threading.Tasks;
 namespace SocialMediaCore.Interfaces
 {
     //Definimos los metodos que deben implementar las clases que usen la interfaz->Contrato
-    public interface IPostRepository
+    public interface IPostRepository: IRepository<Post>
     {
-        Task<IEnumerable<Post>> GetPosts();
-        Task<Post> GetPost(int id);
-
-        Task InsertPost(Post post);
-
-        Task<bool> UpdatePost(Post post);
-        Task<bool> DeletePost(int id);
-
+        Task<IEnumerable<Post>> GetPostsByUser(int userId);
     }
 }
