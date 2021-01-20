@@ -2,22 +2,16 @@ using AutoMapper;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using SocialMediaCore.Interfaces;
 using SocialMediaCore.Services;
 using SocialMediaInfrastructure.Data;
 using SocialMediaInfrastructure.Filters;
 using SocialMediaInfrastructure.Repositories;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace SocialMediaApi
 {
@@ -50,9 +44,11 @@ namespace SocialMediaApi
                 options.UseSqlServer(Configuration.GetConnectionString("SocialMedia"))
             );
             services.AddTransient<IPostService, PostService>();
-            services.AddTransient<IUserRepository, UserRepository>();
-            services.AddTransient<IPostRepository, PostRepository>();//Para inyectar el repositorio adecuado a la herramienta
+            //services.AddTransient<IUserRepository, UserRepository>();
+            //services.AddTransient<IPostRepository, PostRepository>();//Para inyectar el repositorio adecuado a la herramienta
             //Para usar el filter como middleware, es decir un filtro de forma global
+            services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));//La diferencia con transient es el ciclo de vida del objeto
+            services.AddTransient<IUnitWork, UnitOfWork>();
             services.AddMvc(options =>
             {
                 options.Filters.Add<ValidationFilter>();
