@@ -1,6 +1,7 @@
 ﻿using SocialMediaCore.Entities;
 using SocialMediaCore.Exceptions;
 using SocialMediaCore.Interfaces;
+using SocialMediaCore.QueryFilter;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,10 +37,23 @@ namespace SocialMediaCore.Services
             return await _unitOfWork.PostRepository.GetById(id);
         }
 
-        public IEnumerable<Post> GetPosts()
+        public IEnumerable<Post> GetPosts(PostQueryFilter filters)
         {
             //A nivel de dominio no debo tener referencia ef ni a temas de infraestructura
-            return _unitOfWork.PostRepository.GetAll();
+            var posts = _unitOfWork.PostRepository.GetAll();
+            if(filters.UserId != null)
+            {
+                posts = posts.Where(x => x.UserId == filters.UserId);
+            }
+            if (filters.Date != null)
+            {
+                posts = posts.Where(x => x.Date.ToShortDateString() == filters.Date?.ToShortDateString());
+            }
+            if (filters.Description != null)
+            {
+                posts = posts.Where(x => x.Description.ToLower().Contains(filters.Description.ToLower()));
+            }
+            return posts;
         }
 
         public async Task InsertPost(Post post)

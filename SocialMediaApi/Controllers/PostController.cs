@@ -4,7 +4,10 @@ using SocialMediaApi.Responses;
 using SocialMediaCore.DTOs;
 using SocialMediaCore.Entities;
 using SocialMediaCore.Interfaces;
+using SocialMediaCore.QueryFilter;
+using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Threading.Tasks;
 
 namespace SocialMediaApi.Controllers
@@ -23,9 +26,12 @@ namespace SocialMediaApi.Controllers
             _mapper = mapper;
         }
         [HttpGet]
-        public IActionResult GetPosts()
+        //[ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ApiResponse<IEnumerable<PostDto>>))]
+        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+        public IActionResult GetPosts([FromQuery]PostQueryFilter filters)
         {
-            var posts = _postService.GetPosts();
+            var posts = _postService.GetPosts(filters);
             /*var postsDto = posts.Select(x => new PostDto
             {
                 PostId = x.PostId,

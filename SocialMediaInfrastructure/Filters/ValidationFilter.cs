@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 
 namespace SocialMediaInfrastructure.Filters
 {
+    //Será lo último en ejecutarse en una petición
     public class ValidationFilter : IAsyncActionFilter
     {
         public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)

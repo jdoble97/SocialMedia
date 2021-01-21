@@ -37,7 +37,7 @@ namespace SocialMediaApi
             })
             .ConfigureApiBehaviorOptions(options =>
             {
-                options.SuppressModelStateInvalidFilter = true;
+                //options.SuppressModelStateInvalidFilter = true;
             });
 
             //Aquí configurar servicios para las dependencias. Similar a angular
@@ -55,6 +55,7 @@ namespace SocialMediaApi
             {
                 options.Filters.Add<ValidationFilter>();
             }).AddFluentValidation(options=> {
+                //PostValidator
                 options.RegisterValidatorsFromAssemblies(AppDomain.CurrentDomain.GetAssemblies());
             });
 
