@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using SocialMediaApi.Responses;
 using SocialMediaCore.DTOs;
 using SocialMediaCore.Entities;
@@ -29,7 +30,7 @@ namespace SocialMediaApi.Controllers
         //[ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ApiResponse<IEnumerable<PostDto>>))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-        public IActionResult GetPosts([FromQuery]PostQueryFilter filters)
+        public IActionResult GetPosts([FromQuery]PostQueryFilter filters)//FromQuery conseguimos mapear las querys de entrada en el objeto QueryFilter
         {
             var posts = _postService.GetPosts(filters);
             /*var postsDto = posts.Select(x => new PostDto
@@ -42,6 +43,16 @@ namespace SocialMediaApi.Controllers
             }) ;*/
             var postsDto = _mapper.Map<IEnumerable<PostDto>>(posts);
             var response = new ApiResponse<IEnumerable<PostDto>>(postsDto);
+            var metadata = new
+            {
+                posts.TotalCount,
+                posts.PageSize,
+                posts.CurrentPage,
+                posts.TotalPages,
+                posts.HasNextPage,
+                posts.HasPreviousPage
+            };
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata)); 
             return Ok(response);   
         }
 

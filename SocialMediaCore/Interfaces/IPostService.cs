@@ -7,7 +7,7 @@ namespace SocialMediaCore.Interfaces
 {
     public interface IPostService
     {
-        IEnumerable<Post> GetPosts(PostQueryFilter postQueryFilters);
+        PagedList<Post> GetPosts(PostQueryFilter postQueryFilters);
         Task<Post> GetPost(int id);
 
         Task InsertPost(Post post);
