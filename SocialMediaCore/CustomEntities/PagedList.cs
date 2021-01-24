@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace SocialMediaCore.Entities
+namespace SocialMediaCore.CustomEntities
 {
     public class PagedList<T>:List<T>
     {

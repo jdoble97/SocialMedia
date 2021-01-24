@@ -1,6 +1,6 @@
-﻿using SocialMediaCore.Entities;
+﻿using SocialMediaCore.CustomEntities;
+using SocialMediaCore.Entities;
 using SocialMediaCore.QueryFilter;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace SocialMediaCore.Interfaces

@@ -2,15 +2,19 @@ using AutoMapper;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using SocialMediaCore.CustomEntities;
 using SocialMediaCore.Interfaces;
 using SocialMediaCore.Services;
 using SocialMediaInfrastructure.Data;
 using SocialMediaInfrastructure.Filters;
+using SocialMediaInfrastructure.Interfaces;
 using SocialMediaInfrastructure.Repositories;
+using SocialMediaInfrastructure.Services;
 using System;
 
 namespace SocialMediaApi
@@ -34,12 +38,14 @@ namespace SocialMediaApi
             }).AddNewtonsoftJson(options =>
             {
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+                options.SerializerSettings.NullValueHandling = Newtonsoft.Json.NullValueHandling.Ignore; 
             })
             .ConfigureApiBehaviorOptions(options =>
             {
                 //options.SuppressModelStateInvalidFilter = true;
             });
 
+            services.Configure<PaginationOption>(Configuration.GetSection("Pagination"));
             //Aquí configurar servicios para las dependencias. Similar a angular
             //cuando se use esa abstraccion se usará esa implementación
             services.AddDbContext<SocialMediaContext>(options =>
@@ -51,6 +57,13 @@ namespace SocialMediaApi
             //Para usar el filter como middleware, es decir un filtro de forma global
             services.AddScoped(typeof(IRepository<>), typeof(BaseRepository<>));//La diferencia con transient es el ciclo de vida del objeto
             services.AddTransient<IUnitWork, UnitOfWork>();
+            services.AddSingleton<IUriService>(provider => {
+                var accesor = provider.GetRequiredService<IHttpContextAccessor>();
+                var request = accesor.HttpContext.Request;
+                var absoluteUri = string.Concat(request.Scheme, "://", request.Host.ToUriComponent());
+                return new UriService(absoluteUri);
+
+            });
             services.AddMvc(options =>
             {
                 options.Filters.Add<ValidationFilter>();

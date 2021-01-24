@@ -1,12 +1,12 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using SocialMediaApi.Responses;
+using SocialMediaCore.CustomEntities;
 using SocialMediaCore.DTOs;
 using SocialMediaCore.Entities;
 using SocialMediaCore.Interfaces;
 using SocialMediaCore.QueryFilter;
-using System;
+using SocialMediaInfrastructure.Interfaces;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
@@ -19,14 +19,16 @@ namespace SocialMediaApi.Controllers
     {
         private readonly IPostService _postService;
         private readonly IMapper _mapper;
+        private readonly IUriService _uriService;
 
         //Por constructor inyectamos dependencias
-        public PostController(IPostService postRepository, IMapper mapper)
+        public PostController(IPostService postRepository, IMapper mapper, IUriService uriService)
         {
             _postService = postRepository;
             _mapper = mapper;
+            _uriService = uriService;
         }
-        [HttpGet]
+        [HttpGet(Name =nameof(GetPosts))]
         //[ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ApiResponse<IEnumerable<PostDto>>))]
         [ProducesResponseType((int)HttpStatusCode.OK)]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
@@ -37,22 +39,27 @@ namespace SocialMediaApi.Controllers
             {
                 PostId = x.PostId,
                 Description = x.Description,
-                Date = x.Date,
+                Date = x.Date,  
                 Image = x.Image,
                 UserId = x.UserId
             }) ;*/
             var postsDto = _mapper.Map<IEnumerable<PostDto>>(posts);
-            var response = new ApiResponse<IEnumerable<PostDto>>(postsDto);
-            var metadata = new
+            var metadata = new Metadata
             {
-                posts.TotalCount,
-                posts.PageSize,
-                posts.CurrentPage,
-                posts.TotalPages,
-                posts.HasNextPage,
-                posts.HasPreviousPage
+                TotalCount = posts.TotalCount,
+                PageSize = posts.PageSize,
+                CurrentPage = posts.CurrentPage,
+                TotalPages = posts.TotalPages,
+                HasNextPage = posts.HasNextPage,
+                HasPreviousPage = posts.HasPreviousPage,
+                NextPageUrl = _uriService.GetPostPaginationUri(filters, Url.RouteUrl(nameof(GetPosts))).ToString()
             };
-            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata)); 
+            /* Opcion 1: Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(metadata)); */
+            //Opcion 2
+            var response = new ApiResponse<IEnumerable<PostDto>>(postsDto)
+            {
+                Meta = metadata
+            };
             return Ok(response);   
         }
 

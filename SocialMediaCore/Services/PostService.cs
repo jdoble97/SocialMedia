@@ -1,9 +1,10 @@
-﻿using SocialMediaCore.Entities;
+﻿using Microsoft.Extensions.Options;
+using SocialMediaCore.CustomEntities;
+using SocialMediaCore.Entities;
 using SocialMediaCore.Exceptions;
 using SocialMediaCore.Interfaces;
 using SocialMediaCore.QueryFilter;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -19,11 +20,14 @@ namespace SocialMediaCore.Services
         private readonly IRepository<Post> _postRepository;
         private readonly IRepository<Comment> _commentRepository;*/
         private readonly IUnitWork _unitOfWork;
+        private readonly PaginationOption _paginationOption;
 
 
-        public PostService(IUnitWork unitOfWork)
+
+        public PostService(IUnitWork unitOfWork, IOptions<PaginationOption> option)
         {
             _unitOfWork = unitOfWork;
+            _paginationOption = option.Value;
         }
 
         public async Task<bool> DeletePost(int id)
@@ -39,6 +43,8 @@ namespace SocialMediaCore.Services
 
         public PagedList<Post> GetPosts(PostQueryFilter filters)
         {
+            filters.PageNumber = filters.PageNumber == 0 ? _paginationOption.DefaultPageNumber : filters.PageNumber;
+            filters.PageSize = filters.PageSize == 0 ? _paginationOption.DefaultPageSize : filters.PageSize; 
             //A nivel de dominio no debo tener referencia ef ni a temas de infraestructura
             var posts = _unitOfWork.PostRepository.GetAll();
             if(filters.UserId != null)
