@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 
 namespace SocialMediaApi.Controllers
 {
+    [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
     public class PostController : ControllerBase
@@ -28,9 +29,14 @@ namespace SocialMediaApi.Controllers
             _mapper = mapper;
             _uriService = uriService;
         }
+        /// <summary>
+        /// Retrieve all posts
+        /// </summary>
+        /// <param name="filters">Filters to apply</param>
+        /// <returns></returns>
         [HttpGet(Name =nameof(GetPosts))]
         //[ProducesResponseType((int)HttpStatusCode.OK, Type = typeof(ApiResponse<IEnumerable<PostDto>>))]
-        [ProducesResponseType((int)HttpStatusCode.OK)]
+        [ProducesResponseType((int)HttpStatusCode.OK, Type= typeof(ApiResponse<IEnumerable<PostDto>>))]
         [ProducesResponseType((int)HttpStatusCode.BadRequest)]
         public IActionResult GetPosts([FromQuery]PostQueryFilter filters)//FromQuery conseguimos mapear las querys de entrada en el objeto QueryFilter
         {
